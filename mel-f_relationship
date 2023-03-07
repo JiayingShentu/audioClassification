@@ -1,0 +1,16 @@
+#Mel频率与线性频率的关系
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.arange(8001)
+y = 2595 * np.log10(1+x/700)
+
+plt.plot(x, y, color='black', linewidth=1)
+
+plt.xlabel("Frequency", fontsize=14)
+plt.ylabel("Mel-frequency", fontsize=14)
+plt.xlim(0,x[-1])
+plt.ylim(0,y[-1])
+
+plt.savefig('mel_f.png', dpi=500)
