@@ -1,0 +1,65 @@
+import pandas as pd
+import os
+import librosa
+import librosa.display
+import numpy as np
+import IPython.display as ipd
+import matplotlib.pyplot as plt
+from python_speech_features import mfcc
+
+#音频信号切割
+def frame_split(signal, duration, fs, step):
+    # 输入 signal:原始音频信号，一维numpy数组
+    # duration:每帧时长，单位s  建议与mfcc配合
+    # fs:输入音频信号的采样频率
+    # step:帧移,百分比小数
+    # 输出 out:二维矩阵，axis=0方向是帧数，末尾不足以组成一帧的舍去
+    length = int(duration * fs)  # 每帧采样点数
+    step = int(step * length)  # 帧移(按采样点数计)
+    if signal.shape[0] < length:
+        print('长度过短，不足以组成一帧,已沿1轴重复')
+        signal = np.tile(signal, (length // signal.shape[0] + 1))
+    index = length
+    num = 0  # 用来累积帧数
+    while index <= signal.shape[0]:
+        if num == 0:  # 第一次时特殊处理
+            out = signal[index - length:index]
+        else:  # 后续直接vstack
+            out = np.vstack((out, signal[index - length:index]))  # 取出一帧
+        index += step
+        num += 1
+    return out
+
+#提取音频特征
+def features_extractor(file):
+    #file_name="D:/毕设相关/2021.5西电实验/data/wav格式2通道/电流/40.wav"
+    file_name=file;
+    sr=44100
+    offset=0.1
+    duration=5
+    mono=True
+
+    sample=librosa.load(file_name,sr,offset,duration, mono)[0]
+    mfccs = librosa.feature.mfcc(y=sample, sr=sr, n_mfcc=40)
+    signal_frames = frame_split(sample, 0.4, sr, 0.4)  # 400ms帧长，40%重叠率
+    # signal_mfcc = np.array([mfcc(frame,numcep=26,nfilt=52,samplerate=sr,winlen=0.04,winstep=0.02,nfft=2048,
+    #                 lowfreq=50,highfreq=20000,preemph=0,appendEnergy=False)
+    #                     for frame in signal_frames])  # 40ms帧长，20ms帧移  注意nfft点数与帧长的配合建议nfft=winlen*fs 
+    return mfccs
+
+extracted_features=[]
+filePath ='D:\\毕设相关\\2021.5西电实验\\data\\wav格式2通道\\'
+for i in os.listdir(filePath):
+    for j in os.listdir(filePath+i+"\\"):
+        file_name = filePath+i+"\\"+j
+        class_labels=i+j.replace('.wav','')
+        data=features_extractor(file_name)
+        for data_slice in data:
+            extracted_features.append([data_slice,class_labels])
+
+extracted_features_df=pd.DataFrame(extracted_features,columns=['feature','class'])
+print(extracted_features_df.head(10))
+
+print(extracted_features_df['class'].value_counts())
+
+

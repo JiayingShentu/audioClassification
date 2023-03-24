@@ -49,8 +49,10 @@ print("sample.shape:",sample.shape)
 # mfccs = librosa.feature.mfcc(y=audio_data, sr=sampling_rate, n_mfcc=40)
 # print(mfccs)
 signal_frames = frame_split(sample, 0.4, sr, 0.4)  # 400ms帧长，40%重叠率
-print("signal_frames:",signal_frames)
+print("signal_frames:",signal_frames[0])
 signal_mfcc = np.array([mfcc(frame,numcep=26,nfilt=52,samplerate=sr,winlen=0.04,winstep=0.02,nfft=2048,
                 lowfreq=50,highfreq=20000,preemph=0,appendEnergy=False)
                     for frame in signal_frames])  # 40ms帧长，20ms帧移  注意nfft点数与帧长的配合建议nfft=winlen*fs 
-print("signal_mfcc:",signal_mfcc)
+mfccs = np.array([librosa.feature.mfcc(y=frame, sr=sr, n_mfcc=26) for frame in signal_frames])
+print("signal_mfcc:",signal_mfcc[0])
+print("mfcc:",mfccs)

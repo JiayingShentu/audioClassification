@@ -1,0 +1,16 @@
+import os
+import csv
+
+header=['file_name','fold','class']
+filePath ='D:\\毕设相关\\2021.5西电实验\\data\\wav格式2通道\\'
+
+with open('sound_data.csv', 'w', encoding='utf-8',newline='') as file_obj:
+    # 1:创建writer对象
+    writer = csv.writer(file_obj)
+    # 2:写表头
+    writer.writerow(header)
+    for i in os.listdir(filePath):
+        for j in os.listdir(filePath+i+"\\"):
+            print(i+j.replace('.wav',''))
+    # 3:遍历列表，将每一行的数据写入csv
+            writer.writerow((j,i,(i+j).replace('.wav','')))
