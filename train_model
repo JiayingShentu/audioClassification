@@ -5,7 +5,12 @@ import librosa.display
 import numpy as np
 import IPython.display as ipd
 import matplotlib.pyplot as plt
-from python_speech_features import mfcc
+from python_speech_features import mfcc #不需要
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_breast_cancer #这是什么?
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler #这是什么?
+from sklearn import ensemble
 
 #音频信号切割
 def frame_split(signal, duration, fs, step):
@@ -61,5 +66,35 @@ extracted_features_df=pd.DataFrame(extracted_features,columns=['feature','class'
 print(extracted_features_df.head(10))
 
 print(extracted_features_df['class'].value_counts())
+
+X=np.array(extracted_features_df['feature'].tolist())
+y=np.array(extracted_features_df['class'].tolist())
+
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=0)
+svm = SVC().fit(X_train,y_train)
+print('建立的SVM模型为：\n',svm)
+
+prediction = svm.predict(X_test)
+print('预测前20个结果为：\n',prediction[:20])
+
+true = np.sum(prediction == y_test)
+print('预测对的结果数目为：', true)
+print('预测错的的结果数目为：', y_test.shape[0]-true)
+print('预测结果准确率为：', true/y_test.shape[0])
+
+
+random_forest = ensemble.RandomForestClassifier(random_state=0,n_estimators=10000)  
+random_forest.fit(X_train, y_train) 
+
+prediction1=random_forest.predict(X_test)
+print('随机森林')
+print('预测前20个结果为：\n',prediction1[:20])
+true1=np.sum(prediction1==y_test)
+print('预测对的结果数目为：', true1)
+print('预测错的的结果数目为：', y_test.shape[0]-true1)
+print('预测结果准确率为：', true1/y_test.shape[0])
+
+
+
 
 
