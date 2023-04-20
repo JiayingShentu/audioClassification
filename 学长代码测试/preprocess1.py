@@ -3,8 +3,38 @@ import numpy as np
 import librosa
 import os
 from typing import List, Dict
-import json
-from tqdm import tqdm
+
+def get_mfcc(signal, fs, duration, step):
+    # 输入 signal:原始音频信号，一维numpy数组
+    #     fs:输入音频信号的采样频率
+    #     duration:每帧时长，单位s  建议与mfcc配合
+    #     step:帧移,百分比小数
+    winlen = 0.04  # mfcc窗时长，40ms帧长
+    winstep = 0.02  # mfcc相邻窗step，20ms帧移
+    ori_mfcc = mfcc(signal, numcep=26, nfilt=52, samplerate=fs, winlen=winlen, winstep=winstep, nfft=2048, lowfreq=50,
+                    highfreq=20000,
+                    preemph=0, appendEnergy=False)  # 注意nfft点数与帧长的配合建议nfft=winlen*fs
+    pick_num = int((duration - winlen) / winstep + 1)  # 取几个
+    step_num = int(duration * step / winstep)  # 下一样本往后挪几个
+    ind = pick_num
+    max_ind = len(ori_mfcc)
+    out_mfcc = []
+    while ind <= max_ind:
+        out_mfcc.append(ori_mfcc[ind - pick_num:ind])
+        ind += step_num
+    return np.array(out_mfcc)
+
+def get_mfcc_plus(signal, fs, duration, step):
+    # 输入 signal:原始音频信号，一维numpy数组
+    #     fs:输入音频信号的采样频率
+    #     duration:每帧时长，单位s  建议与mfcc配合
+    #     step:帧移,百分比小数
+    winlen = 0.04  # mfcc窗时长，40ms帧长
+    winstep = 0.02  # mfcc相邻窗step，20ms帧移
+    ori_mfcc = mfcc(signal, numcep=26, nfilt=52, samplerate=fs, winlen=winlen, winstep=winstep, nfft=2048, lowfreq=50,
+                    highfreq=20000,
+                    preemph=0, appendEnergy=False)  # 注意nfft点数与帧长的配合建议nfft=winlen*fs
+    return np.array(ori_mfcc)
 
 def label_num_transform(label_list: List) -> Dict:
     """
@@ -18,15 +48,6 @@ def label_num_transform(label_list: List) -> Dict:
     for key, value in label_dict.items():
         num_dict[value] = key
     return label_dict, num_dict
-
-def write_to_json(path, mydict):
-    with open(path, 'w', encoding='utf-8') as f:
-        json.dump(mydict, f, ensure_ascii=False, indent=4)
-
-def read_from_json(path):
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-        return data
         
 
 if __name__ == '__main__':
@@ -36,28 +57,37 @@ if __name__ == '__main__':
     label_list = []
     for file in os.listdir(files):
         label = file  # 标签的获取根据目录结构更改
-        print(label)
         label_list.append(label)
     label_dict, num_dict = label_num_transform(label_list)
     print(label_dict,num_dict)
 
-    # # 把音频转成mfcc形式的文件, 并将mfcc和标签保存为.npy文件
-    # mfcc_path = 'mfccs.npy'
-    # label_path = 'labels.npy'
-    # for i, file in tqdm(enumerate(files)):
-    #     signal, sr = librosa.load(file, sr=None, mono=True)
-    #     signal_mfcc = get_mfcc(signal, sr, 0.4, 0.4)
-    #     label = file.split(os.sep)[-2]
-    #     label_num = np.ones(signal_mfcc.shape[0]) * label_dict[label]
+    # 把音频转成mfcc形式的文件, 并将mfcc和标签保存为.npy文件
+    mfcc_path = 'mfccs.npy'
+    label_path = 'labels.npy'
+    num=0 # 统计音频数量
 
-    #     if i == 0:
-    #         signal_mfccs = signal_mfcc
-    #         label_nums = label_num
-    #     else:
-    #         signal_mfccs = np.concatenate([signal_mfccs, signal_mfcc], axis=0)
-    #         label_nums = np.concatenate([label_nums, label_num])
+    for i in os.listdir(files):
+        for file in os.listdir(files+i+"\\"):
+            filePath=files+i+"\\"+file
+            signal, sr = librosa.load(filePath, sr=None, mono=True)
+            signal_mfcc = get_mfcc(signal, sr, 0.4, 0.4)
+            label=i
+            label_num=np.ones(signal_mfcc.shape[0]) * label_dict[label]
+            #print(i,file,label,label_num)
 
-    # np.save(mfcc_path, signal_mfccs)
-    # np.save(label_path, label_nums)
-    # print(signal_mfccs.shape)
-    # print(label_nums.shape)
+            if num == 0:
+                signal_mfccs = signal_mfcc
+                label_nums = label_num
+            else:
+                signal_mfccs = np.concatenate([signal_mfccs, signal_mfcc], axis=0)
+                label_nums = np.concatenate([label_nums, label_num])
+            num=num+1
+
+    #print(signal_mfccs,label_nums)
+
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\mfccs.npy', signal_mfccs)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\labels.npy', label_nums)
+    print(signal_mfccs)
+    print(label_nums)
+
+    
