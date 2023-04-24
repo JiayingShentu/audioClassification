@@ -40,6 +40,8 @@ mono=True
 sample=librosa.load(file_name,sr,offset,duration, mono=True)[0]
 print("sample:",sample)
 print("sample.shape:",sample.shape)
+
+
 # audio_data, sampling_rate = librosa.load(file_name,sr=44100,offset=0.1,duration=5, mono=True)
 # print("audio_data:",audio_data)
 # print("audio_data.shape:",audio_data.shape)
