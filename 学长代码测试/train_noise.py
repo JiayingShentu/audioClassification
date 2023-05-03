@@ -216,13 +216,13 @@ if __name__ == '__main__':
     #                                                                                   random_state=1, train_size=0.5,
     #                                                                                   test_size=0.5)
     
-    train_data = np.load(r'学长代码测试\addNoise_train_data.npy', allow_pickle=True)
-    valid_data = np.load(r'学长代码测试\addNoise_valid_data.npy', allow_pickle=True)
-    test_data = np.load(r'学长代码测试\test_data.npy', allow_pickle=True)
+    train_data = np.load(r'学长代码测试\data\addNoise_train_data.npy', allow_pickle=True)
+    valid_data = np.load(r'学长代码测试\data\addNoise_valid_data.npy', allow_pickle=True)
+    test_data = np.load(r'学长代码测试\data\test_data.npy', allow_pickle=True)
 
-    train_label = np.load(r'学长代码测试\addNoise_train_label.npy', allow_pickle=True)
-    valid_label = np.load(r'学长代码测试\addNoise_valid_label.npy', allow_pickle=True)
-    test_label = np.load(r'学长代码测试\test_label.npy', allow_pickle=True)
+    train_label = np.load(r'学长代码测试\data\addNoise_train_label.npy', allow_pickle=True)
+    valid_label = np.load(r'学长代码测试\data\addNoise_valid_label.npy', allow_pickle=True)
+    test_label = np.load(r'学长代码测试\data\test_label.npy', allow_pickle=True)
 
     # 对mfcc进行标准化处理
     train_data = batch_standard_scaler(train_data)

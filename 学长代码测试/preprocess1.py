@@ -98,11 +98,11 @@ if __name__ == '__main__':
                                                                                       random_state=1, train_size=0.5,
                                                                                       test_size=0.5)
 
-    np.save(r'D:\毕设相关\audioClassification\学长代码测试\train_data.npy', train_data)
-    np.save(r'D:\毕设相关\audioClassification\学长代码测试\train_label.npy', train_label)
-    np.save(r'D:\毕设相关\audioClassification\学长代码测试\valid_data.npy', valid_data)
-    np.save(r'D:\毕设相关\audioClassification\学长代码测试\valid_label.npy', valid_label)
-    np.save(r'D:\毕设相关\audioClassification\学长代码测试\test_data.npy', test_data)
-    np.save(r'D:\毕设相关\audioClassification\学长代码测试\test_label.npy', test_label)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\data\train_data.npy', train_data)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\data\train_label.npy', train_label)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\data\valid_data.npy', valid_data)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\data\valid_label.npy', valid_label)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\data\test_data.npy', test_data)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\data\test_label.npy', test_label)
 
     
