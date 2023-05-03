@@ -3,6 +3,8 @@ import numpy as np
 import librosa
 import os
 from typing import List, Dict
+from sklearn import model_selection
+from sklearn.model_selection import train_test_split
 
 def get_mfcc(signal, fs, duration, step):
     # 输入 signal:原始音频信号，一维numpy数组
@@ -85,9 +87,22 @@ if __name__ == '__main__':
 
     #print(signal_mfccs,label_nums)
 
-    np.save(r'D:\毕设相关\audioClassification\学长代码测试\mfccs.npy', signal_mfccs)
-    np.save(r'D:\毕设相关\audioClassification\学长代码测试\labels.npy', label_nums)
-    print(signal_mfccs)
-    print(label_nums)
+    # np.save(r'D:\毕设相关\audioClassification\学长代码测试\mfccs.npy', signal_mfccs)
+    # np.save(r'D:\毕设相关\audioClassification\学长代码测试\labels.npy', label_nums)
+    # print(signal_mfccs)
+    # print(label_nums)
+
+    train_data, other_data, train_label, other_label = model_selection.train_test_split(signal_mfccs, label_nums, random_state=1,
+                                                                                        train_size=0.7, test_size=0.3)
+    valid_data, test_data, valid_label, test_label = model_selection.train_test_split(other_data, other_label,
+                                                                                      random_state=1, train_size=0.5,
+                                                                                      test_size=0.5)
+
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\train_data.npy', train_data)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\train_label.npy', train_label)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\valid_data.npy', valid_data)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\valid_label.npy', valid_label)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\test_data.npy', test_data)
+    np.save(r'D:\毕设相关\audioClassification\学长代码测试\test_label.npy', test_label)
 
     
